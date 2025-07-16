@@ -1,3 +1,5 @@
+import json
+import os
 from fastapi import Depends, APIRouter
 from utils import get_db, format_datetime
 
@@ -8,18 +10,19 @@ async def get_top_three(conn = Depends(get_db)):
     results = await conn.fetch("""
         WITH latest_ratings AS (
             SELECT DISTINCT ON (airline_iata_code) 
-                airline_iata_code, rating, created_at
+                airline_iata_code, rating_departure, rating_arrival, created_at
             FROM airline_ratings
             ORDER BY airline_iata_code, created_at DESC
         )
         SELECT 
             lr.airline_iata_code,
             a.name AS airline_name,
-            lr.rating,
+            lr.rating_departure,
+            lr.rating_arrival,
             lr.created_at
         FROM latest_ratings lr
         JOIN airlines a ON lr.airline_iata_code = a.iata_code
-        ORDER BY lr.rating DESC, lr.created_at DESC
+        ORDER BY lr.rating_departure DESC, lr.rating_arrival DESC, lr.created_at DESC
         LIMIT 3;
                             """)
     return [
@@ -29,3 +32,14 @@ async def get_top_three(conn = Depends(get_db)):
         }
         for row in results
     ]
+    
+@router.get("/get_all_direction")
+async def get_all_flight_direction():
+    file_path = "data//flight_direction_stats.json"
+    if not os.path.exists(file_path):
+        return {"error": "File not found"}
+
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    return data

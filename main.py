@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import uvicorn
 from app.API_internal import endpoints
+from utils import calculate_flight_direction, close_db_pool, get_db_pool
 
 load_dotenv()
 
@@ -14,9 +15,12 @@ async def lifespan(app: FastAPI):
 
     dsn = os.getenv('DB_DSN')
     await db.connect(dsn)
+    pool = await get_db_pool()
+    await calculate_flight_direction(pool)
     yield
 
     await db.disconnect()
+    await close_db_pool(pool)
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(endpoints.router)
