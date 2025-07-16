@@ -8,7 +8,7 @@ class Database:
     async def connect(self, dsn: str):
         self.pool = await asyncpg.create_pool(
             dsn=dsn,
-            min_size=5,
+            min_size=3,
             max_size=15,
             command_timeout=30
         )
