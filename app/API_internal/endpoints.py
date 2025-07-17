@@ -1,5 +1,6 @@
 import json
 import os
+import aiofiles
 from fastapi import Depends, APIRouter
 from utils import get_db, format_datetime
 
@@ -43,3 +44,13 @@ async def get_all_flight_direction():
         data = json.load(file)
     
     return data
+
+@router.get("/get_airline_punctuality")
+async def get_airline_punctuality():
+    file_path = "data/airline_punctuality.json"
+    if not os.path.exists(file_path):
+        return {"error": "File not found"}
+
+    async with aiofiles.open(file_path, 'r', encoding='utf-8') as file:
+        data = await file.read()
+        return json.loads(data)

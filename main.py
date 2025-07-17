@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 import uvicorn
 from app.API_internal import endpoints
-from utils import calculate_flight_direction, close_db_pool, get_db_pool
+from utils import calculate_flight_direction, close_db_pool, get_db_pool, calculate_airline_punctuality
 
 load_dotenv()
 
@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
     await db.connect(dsn)
     pool = await get_db_pool()
     await calculate_flight_direction(pool)
+    await calculate_airline_punctuality(pool)
     yield
 
     await db.disconnect()
