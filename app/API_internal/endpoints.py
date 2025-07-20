@@ -54,3 +54,37 @@ async def get_airline_punctuality():
     async with aiofiles.open(file_path, 'r', encoding='utf-8') as file:
         data = await file.read()
         return json.loads(data)
+    
+@router.get("/get_airports")
+async def get_airports(conn = Depends(get_db)):
+    results = await conn.fetch("""
+        SELECT 
+            a.iata_code AS "IATA код",
+            a.airport_name AS "Название аэропорта",
+            a.longitude AS "Долгота",
+            a.latitude AS "Широта",
+            COALESCE(dep.departure_count, 0) AS "Кол-во вылетов",
+            COALESCE(arr.arrival_count, 0) AS "Кол-во прилетов"
+        FROM airports a
+        LEFT JOIN (
+            SELECT 
+                departure_airport AS iata_code,
+                COUNT(*) AS departure_count
+            FROM flights
+            GROUP BY departure_airport
+        ) dep ON a.iata_code = dep.iata_code
+        LEFT JOIN (
+            SELECT 
+                arrival_airport AS iata_code,
+                COUNT(*) AS arrival_count
+            FROM flights
+            GROUP BY arrival_airport
+        ) arr ON a.iata_code = arr.iata_code;
+                               """)
+    
+    return [
+        {
+            **dict(row)
+        }
+        for row in results
+    ]
