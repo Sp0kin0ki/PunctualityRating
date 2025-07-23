@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import uvicorn
 from app.API_internal import endpoints
+from app.API_external import upload, public
 from utils import calculate_flight_direction, close_db_pool, get_db_pool, calculate_airline_punctuality
 
 load_dotenv()
@@ -25,6 +26,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(endpoints.router)
+app.include_router(upload.router)
+app.include_router(public.router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
