@@ -24,7 +24,16 @@ async def lifespan(app: FastAPI):
     await db.disconnect()
     await close_db_pool(pool)
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Punctuality Flight API",
+    version="0.1.0",
+    openapi_version="3.0.3",
+    lifespan=lifespan,
+    root_path="/api",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
+    redoc_url=None,
+)
 app.include_router(endpoints.router)
 app.include_router(upload.router)
 app.include_router(public.router)
