@@ -6,6 +6,7 @@ import asyncpg
 from DB.Database import db
 from datetime import datetime
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
 load_dotenv()
 
@@ -160,3 +161,12 @@ async def calculate_airline_punctuality(pool: asyncpg.pool.Pool):
         except Exception as e:
             print(f"Error in calculate_airline_punctuality: {e}")
             return False
+
+
+@asynccontextmanager
+async def get_db_connection():
+    conn = await asyncpg.connect(os.getenv('DB_DSN'))
+    try:
+        yield conn
+    finally:
+        await conn.close()

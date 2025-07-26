@@ -82,6 +82,15 @@
   },
   {
     "airport1": "AER",
+    "airport2": "DME",
+    "total_flights": 1,
+    "on_time_arrivals": 1,
+    "on_time_percentage": 100.0,
+    "avg_delay_minutes": 13.0,
+    "missing_departure_count": 0
+  },
+  {
+    "airport1": "AER",
     "airport2": "EGO",
     "total_flights": 1463,
     "on_time_arrivals": 1362,
@@ -1793,9 +1802,9 @@
   {
     "airport1": "LED",
     "airport2": "SVO",
-    "total_flights": 3657,
+    "total_flights": 3660,
     "on_time_arrivals": 3476,
-    "on_time_percentage": 95.1,
+    "on_time_percentage": 95.0,
     "avg_delay_minutes": 12.5,
     "missing_departure_count": 0
   },

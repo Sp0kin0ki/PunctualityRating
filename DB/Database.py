@@ -19,7 +19,6 @@ class Database:
     
     @asynccontextmanager
     async def connection(self):
-        """Контекстный менеджер для соединений"""
         if not self.pool:
             raise RuntimeError("Database not connected")
         
